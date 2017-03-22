@@ -3,6 +3,7 @@
     using System;
     using System.Threading;
     using FluentDate;
+    using System.Globalization;
 
     /// <summary>
     /// Static class containing Fluent <see cref="DateTimeOffset"/> extension methods.
@@ -26,7 +27,7 @@
         }
 
         /// <summary>
-        /// Returns the same date (same Day, Month, Hour, Minute, Second etc) in the next calendar year. 
+        /// Returns the same date (same Day, Month, Hour, Minute, Second etc) in the next calendar year.
         /// If that day does not exist in next year in same month, number of missing days is added to the last day in same month next year.
         /// </summary>
         public static DateTimeOffset NextYear(this DateTimeOffset start)
@@ -338,8 +339,8 @@
         /// <returns>given <see cref="DateTimeOffset"/> with the day part set to the first day in the quarter.</returns>
         public static DateTimeOffset FirstDayOfQuarter(this DateTimeOffset current)
         {
-            var currentQuarter = (current.Month - 1)/3 + 1;
-            return current.SetDate(current.Year, 3*currentQuarter - 2, 1);
+            var currentQuarter = (current.Month - 1) / 3 + 1;
+            return current.SetDate(current.Year, 3 * currentQuarter - 2, 1);
         }
 
         /// <summary>
@@ -360,8 +361,8 @@
         /// <returns>given <see cref="DateTimeOffset"/> with the day part set to the last day in the quarter.</returns>
         public static DateTimeOffset LastDayOfQuarter(this DateTimeOffset current)
         {
-            var currentQuarter = (current.Month - 1)/3 + 1;
-            var firstDay = current.SetDate(current.Year, 3*currentQuarter - 2, 1);
+            var currentQuarter = (current.Month - 1) / 3 + 1;
+            var firstDay = current.SetDate(current.Year, 3 * currentQuarter - 2, 1);
             return firstDay.SetMonth(firstDay.Month + 2).LastDayOfMonth();
         }
 
@@ -374,7 +375,6 @@
         {
             return current.SetDay(DateTime.DaysInMonth(current.Year, current.Month));
         }
-
 
         /// <summary>
         /// Adds the given number of business days to the <see cref="DateTimeOffset"/>.
@@ -408,7 +408,6 @@
             return AddBusinessDays(current, -days);
         }
 
-
         /// <summary>
         /// Determine if a <see cref="DateTimeOffset"/> is in the future.
         /// </summary>
@@ -418,7 +417,6 @@
         {
             return dateTime > DateTimeOffset.Now;
         }
-
 
         /// <summary>
         /// Determine if a <see cref="DateTimeOffset"/> is in the past.
@@ -437,45 +435,45 @@
             switch (rt)
             {
                 case RoundTo.Second:
-                {
-                    rounded = new DateTimeOffset(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, dateTime.Second, dateTime.Offset);
-                    if (dateTime.Millisecond >= 500)
                     {
-                        rounded = rounded.AddSeconds(1);
+                        rounded = new DateTimeOffset(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, dateTime.Second, dateTime.Offset);
+                        if (dateTime.Millisecond >= 500)
+                        {
+                            rounded = rounded.AddSeconds(1);
+                        }
+                        break;
                     }
-                    break;
-                }
                 case RoundTo.Minute:
-                {
-                    rounded = new DateTimeOffset(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, 0, dateTime.Offset);
-                    if (dateTime.Second >= 30)
                     {
-                        rounded = rounded.AddMinutes(1);
+                        rounded = new DateTimeOffset(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, 0, dateTime.Offset);
+                        if (dateTime.Second >= 30)
+                        {
+                            rounded = rounded.AddMinutes(1);
+                        }
+                        break;
                     }
-                    break;
-                }
                 case RoundTo.Hour:
-                {
-                    rounded = new DateTimeOffset(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, 0, 0, dateTime.Offset);
-                    if (dateTime.Minute >= 30)
                     {
-                        rounded = rounded.AddHours(1);
+                        rounded = new DateTimeOffset(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, 0, 0, dateTime.Offset);
+                        if (dateTime.Minute >= 30)
+                        {
+                            rounded = rounded.AddHours(1);
+                        }
+                        break;
                     }
-                    break;
-                }
                 case RoundTo.Day:
-                {
-                    rounded = new DateTimeOffset(dateTime.Year, dateTime.Month, dateTime.Day, 0, 0, 0, dateTime.Offset);
-                    if (dateTime.Hour >= 12)
                     {
-                        rounded = rounded.AddDays(1);
+                        rounded = new DateTimeOffset(dateTime.Year, dateTime.Month, dateTime.Day, 0, 0, 0, dateTime.Offset);
+                        if (dateTime.Hour >= 12)
+                        {
+                            rounded = rounded.AddDays(1);
+                        }
+                        break;
                     }
-                    break;
-                }
                 default:
-                {
-                    throw new ArgumentOutOfRangeException("rt");
-                }
+                    {
+                        throw new ArgumentOutOfRangeException("rt");
+                    }
             }
 
             return rounded;
@@ -489,13 +487,12 @@
         /// <remarks>the beginning of the week is controlled by the current Culture</remarks>
         public static DateTimeOffset FirstDayOfWeek(this DateTimeOffset dateTime)
         {
-            var currentCulture = Thread.CurrentThread.CurrentCulture;
+            var currentCulture = CultureInfo.CurrentCulture;
             var firstDayOfWeek = currentCulture.DateTimeFormat.FirstDayOfWeek;
             var offset = dateTime.DayOfWeek - firstDayOfWeek < 0 ? 7 : 0;
             var numberOfDaysSinceBeginningOfTheWeek = dateTime.DayOfWeek + offset - firstDayOfWeek;
 
             return dateTime.AddDays(-numberOfDaysSinceBeginningOfTheWeek);
-
         }
 
         /// <summary>
@@ -529,7 +526,6 @@
             return current.FirstDayOfWeek().AddDays(6);
         }
 
-
         /// <summary>
         /// Returns the last day of the year keeping the time component intact. Eg, 2011-12-24T06:40:20.005 => 2011-12-31T06:40:20.005
         /// </summary>
@@ -539,7 +535,6 @@
         {
             return current.SetDate(current.Year, 12, 31);
         }
-
 
         /// <summary>
         /// Returns the previous month keeping the time component intact. Eg, 2010-01-20T06:40:20.005 => 2009-12-20T06:40:20.005
@@ -562,7 +557,6 @@
             return firstDayOfPreviousMonth.SetDay(day);
         }
 
-
         /// <summary>
         /// Returns the next month keeping the time component intact. Eg, 2012-12-05T06:40:20.005 => 2013-01-05T06:40:20.005
         /// If the next month doesn't have that many days the last day of the next month is used. Eg, 2013-01-31T06:40:20.005 => 2013-02-28T06:40:20.005
@@ -571,7 +565,6 @@
         /// <returns></returns>
         public static DateTimeOffset NextMonth(this DateTimeOffset current)
         {
-
             var year = current.Month == 12 ? current.Year + 1 : current.Year;
 
             var month = current.Month == 12 ? 1 : current.Month + 1;
@@ -599,7 +592,7 @@
         }
 
         /// <summary>
-        /// Determines whether the specified <see cref="DateTimeOffset"/> value is exactly the same month (month + year) then current. Eg, 2015-12-01 and 2014-12-01 => False 
+        /// Determines whether the specified <see cref="DateTimeOffset"/> value is exactly the same month (month + year) then current. Eg, 2015-12-01 and 2014-12-01 => False
         /// </summary>
         /// <param name="current">The current value</param>
         /// <param name="date">Value to compare with</param>
